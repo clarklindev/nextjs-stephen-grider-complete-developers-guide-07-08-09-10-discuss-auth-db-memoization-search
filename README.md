@@ -173,3 +173,60 @@ import {PrismaClient} from '@prisma/client';
 export const db = new PrismaClient();
 
 ```
+
+## 64. OAuth setup
+
+- Auth Setup
+
+<img
+src='exercise_files/64-auth-setup.png'
+alt='64-auth-setup.png'
+width=600
+/>
+
+- oauth flow
+
+<img
+src='exercise_files/64-oauth-flow.png'
+alt='64-oauth-flow.png'
+width=600
+/>
+
+- steps 1-3
+## 1. authentication will flow through [github oauth](http://github.com/settings/applications/new).
+
+### create oauth app
+    - create an OAuth App and generate a client_id and client_secret
+    - Application name: Dev Discuss
+    - Homepage URL: http://localhost:3000
+    - Authorization callback URL: http://localhost:3000/api/auth/callback/github 
+    - click -> Register application
+
+### generate client ID / secret
+    - generates Client ID
+    - generate a new client Secret
+
+<img
+src='exercise_files/64-github-oauth.png'
+alt='64-github-oauth.png'
+width=600
+/>
+
+## 2. .env.local file
+- create in root: `.env.local`
+- AUTH_SECRET is random string of letters you choose
+
+```
+GITHUB_CLIENT_ID=""
+GITHUB_CLIENT_SECRET=""
+AUTH_SECRET=""
+
+```
+
+## 3. install npm packages
+- tutorial use exact version
+
+```sh
+npm install --save-exact @auth/core@0.18.1 @auth/prisma-adapter@1.0.6 next-auth@5.0.0-beta.3
+```
+
