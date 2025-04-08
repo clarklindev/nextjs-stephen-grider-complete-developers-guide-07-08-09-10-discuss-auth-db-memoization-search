@@ -51,3 +51,9 @@ src='exercise_files/59-5-view-a-post.png'
 alt='59-5-view-a-post.png'
 width=600
 />
+
+## 60. npm libraries
+- nextui
+- prisma -> sqlite db
+- next-auth -> authjs (renamed)
+- github Oauth
