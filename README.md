@@ -131,3 +131,45 @@ export default function RootLayout({
 }
 
 ```
+
+## 63. database setup
+
+
+```sh
+npx prisma init --datasource-provider sqlite
+```
+
+### create schema
+- this creates the schema `prisma/schema.prisma`
+
+### replace schema
+- replace with the given schema.prisma from lesson 62 (given)
+- it has data models:
+
+- model Account
+- model Session
+- model User
+- model VerificationToken
+- model Topic
+- model Post
+- model Comment
+
+### create db
+- call this to create the db
+- note the .env variable -> DATABASE_URL="file:./dev.db"
+- give migration a name eg. `init`
+
+```sh
+npx prisma migrate dev
+```
+
+- this puts a dev.db in `prisma/`
+- create src/db/index.ts
+
+```ts
+//src/db/index.ts
+import {PrismaClient} from '@prisma/client';
+
+export const db = new PrismaClient();
+
+```
