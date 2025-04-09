@@ -230,3 +230,58 @@ AUTH_SECRET=""
 npm install --save-exact @auth/core@0.18.1 @auth/prisma-adapter@1.0.6 next-auth@5.0.0-beta.3
 ```
 
+## 65. Next-Auth Setup
+## 4. make a auth.ts in src/ and setup NextAuth and PrismaAdapter in there
+
+- inside schema.prisma -> models automatically used by `PrismaAdapter`
+    - model Account
+    - model Session
+    - model User 
+    - model VerificationToken
+
+- when signing up will need the specific User properties (see `prisma/schema.prima` model):
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    image         String?
+    accounts      Account[]
+    sessions      Session[]
+
+```ts
+//src/auth.ts
+import NextAuth from 'next-auth';
+import Github from 'next-auth/providers/github';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { db } from '@/db';
+
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+
+if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
+  throw new Error('Missing github oauth credentials');
+}
+
+export const {
+  handlers: { GET, POST },
+  auth,
+  signOut,
+  signIn,
+} = NextAuth({
+  adapter: PrismaAdapter(db),
+  providers: [
+    Github({
+      clientId: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET,
+    }),
+  ],
+  callbacks: {
+    // Usually not needed, here we are fixing a bug in nextauth
+    async session({ session, user }: any) {
+      if (session && user) {
+        session.user.id = user.id;
+      }
+      return session;
+    },
+  },
+});
+```
