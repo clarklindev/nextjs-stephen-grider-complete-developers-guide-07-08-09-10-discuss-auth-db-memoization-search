@@ -331,3 +331,23 @@ width=600
   {name, email, avatar}
 10. we create a new "User" record in the database
 11. we send a cookie back to the users browser which will be included with all future requests automatically. That cookie tells us who is making a request to our server
+
+## 67. wrapping auth in Server Actions
+- make server actions to signin/signout the user (optional)
+- `src/actions/index.ts`
+
+```ts
+// src/actions/index.ts
+
+'use server';
+
+import * as auth from '@/auth';
+
+export async function signIn(){
+    return auth.signIn('github');   //passin what provider we want to signin with
+}
+
+export async function signOut(){
+    return auth.signOut();
+}
+```
