@@ -285,3 +285,49 @@ export const {
   },
 });
 ```
+
+## 66. The Theory Behind OAuth
+- set up the `app/api/auth[...nextauth]/route.ts` file to handle the request between Githubs Servers and ours
+- `route.ts` file inside app/ is special in that you can export `GET` and `POST` functions (implement API handlers inside Nextjs app)
+- we usually use actionhandlers within our own apps. 
+- we would use route.ts to create GET and POST for outside servers to access our app automatically (eg. github server) 
+- will use GET, POST from nextAuth
+
+```ts
+// app/api/auth[...nextauth]/route.ts
+export { GET, POST} from '@/auth'
+```
+
+- @3min33sec
+
+- Oauth flow
+
+<img
+src='exercise_files/64-oauth-flow.png'
+alt='64-oauth-flow.png'
+width=600
+/>
+
+- most of oauth flow is handled behind the scenes, we just need to make sure of the `Authorization callback url`
+
+### Requests made by users browser
+1. user clicks on sign up button
+2. users browser causes request to backend (NEXT SERVER) 
+3. we realise user is trying to signup, so we redirect to (github server WITH client_id)  
+  - `github.com/login/oauth/authorize?client_id=123`
+4. github asks user if they are OK sharing information with our app. if so they redirect back to our server
+  - callback url from github auth setup
+  - `localhost:3000/api/auth/github/callback?code=456`
+
+### Communication between (our server) and (github)
+5. our server takes 'code' off request and makes a follow up request to Github
+  - `github.com/login/oauth/access_token` `{clientId, clientSecret, code}`
+6. github makes sure the {clientD, clientSecret and code} are valid then responds with an "access_token"
+7. if valid responds with access_token
+  - `access_token=abc123`
+8. we make another request with the access_token to get details about the user (name, email etc)
+  - `api.github.com/user` `Authorization: Bearer abc123`
+9. github responds with the user's profile
+  {name, email, avatar}
+10. we create a new "User" record in the database
+11. we send a cookie back to the users browser which will be included with all future requests automatically. That cookie tells us who is making a request to our server
