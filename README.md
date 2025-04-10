@@ -351,3 +351,127 @@ export async function signOut(){
     return auth.signOut();
 }
 ```
+
+## 68. sign-in, sign-out, check auth status
+
+- actions
+
+<img
+src='exercise_files/68-signin-signout-check-auth-status.png'
+alt='68-signin-signout-check-auth-status.png'
+width=600
+/>
+
+### sign in
+- app/page.tsx 
+- wrap button with form
+- clicking on submit you will be taken to a page asking for authorization of your user account with authorization just created.
+
+### Sign out
+- if you want to sign out user, create a form and wrap the button for sign out
+
+```ts
+//app/pages.tsx
+import {Button} from '@nextui-org/react';
+import * as actions from '@/actions';
+import {auth} from '@/auth';
+
+export default async function Home() {
+  const session = await auth();
+
+  return (
+    <div>
+      <form action={actions.signIn}>      
+        <Button type="submit">sign in</Button>
+      </form>
+      <form action={actions.signOut}>      
+        <Button type="submit">sign out</Button>
+      </form>
+
+      {session?.user ? <div>{JSON.stringify(session.user)}</div>: <div>signed out</div>}
+
+    </div>
+  );
+}
+
+```
+### try and access users authentication status - from server component
+- see code (above)
+- import {auth} from '@/auth';
+- const session = await auth();
+- {session?.user ? <div>{JSON.stringify(session.user)}</div>: <div>signed out</div>}
+
+### try and access users authentication status - from client component
+- requires a 'SessionProvider' to be set up in the 'providers.tsx' file
+- using react context to share information about whether user is signed in (throughout all client components in our app)
+
+```tsx
+//src/app/providers.tsx
+'use client';
+
+import {NextUIProvider} from '@nextui-org/react';
+import { SessionProvider } from 'next-auth/react';
+
+interface ProvidersProps{
+    children: React.ReactNode
+}
+
+export default function Providers({children}:ProvidersProps){
+    return (
+    <SessionProvider>
+        <NextUIProvider>{children}</NextUIProvider>
+    </SessionProvider>)
+}
+```
+
+```tsx
+//src/components/profile.tsx
+'use client';
+
+import {useSession} from 'next-auth/react';
+
+
+export default function Profile(){
+    const session = useSession();
+
+    if(session.data?.user){
+        return <div>From client: {JSON.stringify(session.data.user)}</div>
+    }
+
+    return <div>from client: user is NOT signed in</div>
+}
+```
+
+### import Profile component
+- import Profile from '@/components/profile';
+
+```ts
+//app/pages.tsx
+import {Button} from '@nextui-org/react';
+import * as actions from '@/actions';
+import {auth} from '@/auth';
+import Profile from '@/components/profile';
+
+export default async function Home() {
+  const session = await auth();
+
+  return (
+    <div>
+      <form action={actions.signIn}>      
+        <Button type="submit">sign in</Button>
+      </form>
+      <form action={actions.signOut}>      
+        <Button type="submit">sign out</Button>
+      </form>
+
+      {session?.user ? <div>{JSON.stringify(session.user)}</div>: <div>signed out</div>}
+
+      <Profile/>
+    </div>
+  );
+}
+
+```
+## test
+- `npm run dev`
+- http://localhost:3000
