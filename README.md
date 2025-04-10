@@ -553,7 +553,45 @@ export default paths;
 
 ```
 
+## 72. Creating the Routing Structure
 3. create your routing folders + page.tsx files based on step #1
+- creating the files/folders for the path
+
+  - /
+  - /topics/[slug]/page.tsx
+  ```tsx
+  //page.tsx
+  export default function TopicShowPage(){
+    return <div>topic show</div>
+  }
+  ```
+
+  - /topics/[slug]/posts/new
+
+  ```tsx
+  //page.tsx
+  export default function PostCreatePage(){
+    return <div>post create page</div>
+  }
+  ```
+
+  - /topics/[slug]/posts/[postId]
+
+  ```tsx
+  //page.tsx
+  export default function PostShowPage(){
+    return <div>post show page</div>
+  }
+  ```
+
+  <img
+  src='exercise_files/72-creating-routes.png'
+  alt='72-creating-routes.png'
+  width=300
+  />
+
 4. identfy the places where data changes in your app
 5. make empty server actions for each of those
 6. add in comments on what paths you'll need to revalidate each server action 
+
+
