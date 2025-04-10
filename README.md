@@ -475,3 +475,26 @@ export default async function Home() {
 ## test
 - `npm run dev`
 - http://localhost:3000
+
+## 69. upfront design process
+
+<img
+src='exercise_files/69-recommended-initial-design.png'
+alt='69-recommended-initial-design.png'
+width=600
+/>
+
+1. identify all the different routes you want your app to have + the data that each shows
+
+<img
+src='exercise_files/69-design-process.png'
+alt='69-design-process.png'
+width=600
+/>
+
+
+2. make 'path helper' functions
+3. create your routing folders + page.tsx files based on step #1
+4. identfy the places where data changes in your app
+5. make empty server actions for each of those
+6. add in comments on what paths you'll need to revalidate each server action 
