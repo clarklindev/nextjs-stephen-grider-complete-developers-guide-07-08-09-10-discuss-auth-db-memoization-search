@@ -492,8 +492,37 @@ alt='69-design-process.png'
 width=600
 />
 
-
+## 70. Why Path Helpers?
 2. make 'path helper' functions
+- path helpers -> make it easy to edit links, because with them, your paths arent in each page
+
+- without path helpers
+
+<img
+src='exercise_files/70-without-path-helpers.png'
+alt='70-without-path-helpers.png'
+width=600
+/>
+
+- path helpers
+<img
+src='exercise_files/70-path-helpers.png'
+alt='70-path-helpers.png'
+width=600
+/>
+
+- with path helper, you're just passing in as a slug to the path helper the part of link thats unique for the path
+```ts
+postCreatePath(slug: string){
+  return `/topics/${slug}/posts/neW`
+}
+```
+
+- then calling the path is easier to edit and call and less error prone
+```tsx
+<Link href={paths.postCreatePath(topic.slug)}>create</Link>
+```
+
 3. create your routing folders + page.tsx files based on step #1
 4. identfy the places where data changes in your app
 5. make empty server actions for each of those
