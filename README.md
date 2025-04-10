@@ -505,6 +505,7 @@ width=600
 />
 
 - path helpers
+
 <img
 src='exercise_files/70-path-helpers.png'
 alt='70-path-helpers.png'
@@ -518,9 +519,38 @@ postCreatePath(slug: string){
 }
 ```
 
+
+
 - then calling the path is easier to edit and call and less error prone
 ```tsx
 <Link href={paths.postCreatePath(topic.slug)}>create</Link>
+```
+
+## 71. Path Helper Implementation
+-src/paths/ts
+
+```ts
+//src/paths/ts
+const paths = {
+    homePath(){
+        return '/'
+    },
+
+    topicShow(topicSlug:string){
+        return `/topics/${topicSlug}/`
+    },
+
+    postCreate(topicSlug:string){
+        return `/topics/${topicSlug}/posts/new`
+    },
+
+    postShow(topicSlug:string, postId:string){
+        return `/topics/${topicSlug}/posts/${postId}`
+    }
+}
+
+export default paths;
+
 ```
 
 3. create your routing folders + page.tsx files based on step #1
