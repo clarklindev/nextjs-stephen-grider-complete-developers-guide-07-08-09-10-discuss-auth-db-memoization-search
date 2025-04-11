@@ -590,8 +590,18 @@ export default paths;
   width=300
   />
 
+
+## 73. Stubbing Out Server Actions
 4. identfy the places where data changes in your app
+- create server actions for places where i can change data
+
+- src/actions/create-comments.ts
+- src/actions/create-posts.ts
+- src/actions/create-topics.ts
+
 5. make empty server actions for each of those
+
+
 6. add in comments on what paths you'll need to revalidate each server action 
 
 
