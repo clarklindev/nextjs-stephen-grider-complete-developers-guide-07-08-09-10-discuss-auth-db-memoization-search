@@ -594,14 +594,37 @@ export default paths;
 ## 73. Stubbing Out Server Actions
 4. identfy the places where data changes in your app
 - create server actions for places where i can change data
-
-- src/actions/create-comments.ts
-- src/actions/create-posts.ts
-- src/actions/create-topics.ts
-
 5. make empty server actions for each of those
 
-
+## 74. Planning Revalidating Strategies
 6. add in comments on what paths you'll need to revalidate each server action 
+
+- src/actions/create-comments.ts
+
+```ts
+'use server';
+export async function createComments(){
+    //TODO: revalidate post show page 
+}
+```
+
+- src/actions/create-posts.ts
+```ts
+'use server';
+
+export async function createPosts(){
+    //TODO: revalidate the topic show page
+}
+```
+- src/actions/create-topics.ts
+```ts
+'use server';
+
+export async function createTopics(){
+  //TODO: revalidate homepage
+}
+```
+
+
 
 
