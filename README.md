@@ -1377,3 +1377,81 @@ const session = await auth();
 ) : null}
 
 ```
+
+## 91. handling validated data / save to db / handle db errors in forms
+- TODO: take validated data save to database (to its topic)
+- show topic on the screen
+
+- then in paths.ts we created topicShow() which returns the path:
+
+```ts
+const paths = {
+    homePath(){
+        return '/'
+    },
+
+    topicShow(topicSlug:string){
+        return `/topics/${topicSlug}/`
+    },
+
+    postCreate(topicSlug:string){
+        return `/topics/${topicSlug}/posts/new`
+    },
+
+    postShow(topicSlug:string, postId:string){
+        return `/topics/${topicSlug}/posts/${postId}`
+    }
+}
+
+export default paths;
+```
+
+- type Topic (id, slug, description, createdAt, updatedAt)
+- try{}catch(err:unknown){} redirect() pattern is so that if redirect() is inside the try{}, and since redirect() works by throwing an error, it will be caught by catch()
+- slug -> result.data.name comes from if validation is successful, you get a result.data object with the props from form as attributes
+
+- `actions/create-topic.ts`
+```ts
+//actions/create-topic.ts
+'use server';
+import type {Topic} from '@prisma/client';
+import {redirect} from 'next/navigation';
+import {db} from '@/db';
+import paths from '@/paths';
+import {revalidatePath} from 'next/cache';
+
+//...
+
+if(!session ....){
+
+}
+
+let topic: Topic
+try{
+    topic = await db.topic.create({
+        data:{
+            slug: result.data.name,
+            description: result.data.description
+        }
+    });
+
+}catch(err:unknown){
+    if(err instanceof Error){
+        return {
+            errors:{
+                _form: [err.message]
+            }
+        }
+    }else{
+        return {
+            errors:{
+                _form: ['something went wrong']
+            }
+        }
+    }
+}
+
+revalidatePath('/');
+redirect(paths.topicShow(topic.slug));
+
+```
