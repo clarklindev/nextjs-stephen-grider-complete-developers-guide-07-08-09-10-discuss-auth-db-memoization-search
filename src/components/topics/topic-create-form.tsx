@@ -13,7 +13,7 @@ import * as actions from '@/actions';
 import { useActionState } from "react";
 
 export default function TopicCreateForm(){
-    const [formState, action] = useActionState(actions.createTopic, 5);
+    const [formState, action] = useActionState(actions.createTopic, {errors: {}});
 
     return (
         <Popover placement="left">
