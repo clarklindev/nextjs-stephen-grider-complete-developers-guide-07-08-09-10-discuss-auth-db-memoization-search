@@ -1004,3 +1004,21 @@ export default function TopicCreateForm(){
     )
 }
 ```
+
+## 82. receiving form data
+- give form inputs/textareas name properties
+- then you can retrieve form values
+
+```ts
+//actions/create-topic.ts
+
+'use server';
+
+export async function createTopic(formData:FormData){
+    const name = formData.get('name');
+    const description = formData.get('description');
+
+    console.log(name, description)
+    //TODO: revalidate the homepage
+}
+```
