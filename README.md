@@ -1,3 +1,18 @@
+# Table of contents
+[section 07 Authentication](#section-07-authentication)
+[section 08 Using Data - database queries](#section-08-using-data---database-queries)
+
+
+
+
+
+---
+
+
+
+
+
+
 # section 07 Authentication
 
 <img
