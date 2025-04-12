@@ -1,6 +1,6 @@
 export { signIn } from "./sign-in";
 export { signOut } from "./sign-out";
 
-export { createComments } from "./create-comments";
-export { createPosts } from "./create-posts";
-export { createTopics } from "./create-topics";
+export { createComment } from "./create-comment";
+export { createPost } from "./create-post";
+export { createTopic } from "./create-topic";
