@@ -937,3 +937,29 @@ if(session.status === "loading"){
   }
 else {} 
 ```
+
+## 80. creating topics
+- TODO: ability to create topics
+  - and posts inside a topic
+  - topic creation should have validation
+
+<img
+src='exercise_files/80-topic-creation.png'
+alt='80-topic-creation.png'
+width=600
+/>
+
+<img
+src='exercise_files/80-hierarchy-tree-for-topic.png'
+alt='80-hierarchy-tree-for-topic.png'
+width=600
+/>
+
+<img
+src='exercise_files/80-PostList+TopicCreateForm.png'
+alt='80-PostList+TopicCreateForm.png'
+width=600
+/>
+
+- components/topic/topic-create-form.tsx
+- import into: app/page.tsx

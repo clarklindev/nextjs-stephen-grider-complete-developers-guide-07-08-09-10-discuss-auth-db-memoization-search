@@ -2,7 +2,6 @@
 
 import {useSession} from 'next-auth/react';
 
-
 export default function Profile(){
     const session = useSession();
 
