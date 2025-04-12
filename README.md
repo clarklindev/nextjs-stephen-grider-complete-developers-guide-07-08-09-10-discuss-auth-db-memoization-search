@@ -1135,12 +1135,47 @@ import { useActionState } from "react";
 - NOTE: this lesson uses intial state with value eg. 5
 
 - 'use client';
-- `const [formState, action] = useActionState(actions.createTopic, 5);`
+
+```ts
+//components/topic/topic-create-form.tsx
+const [formState, action] = useActionState(actions.createTopic, 5);
+```
+
 - formState becomes first argument in server action!!!
-- TAKEAWAY FROM THE LESSON, the type here of useActionState initial state (2nd prop) '5' MUST BE the same typescript type returned inside server form action AND the first argument.
+- TAKEAWAY FROM THE LESSON, the type here of useActionState initial state (2nd prop) '5' MUST BE the same typescript type returned from value inside server form action AND the first argument type.
 
 <img
 src='exercise_files/86-fixing-formStateErrors.png'
 alt='86-fixing-formStateErrors.png'
 width=600
 />
+
+```ts
+// actions/create-topic.ts
+'use server';
+
+import { z } from 'zod';
+
+const createTopicSchema = z.object({
+    name: z
+        .string()
+        .min(3)
+        .regex(/^[a-z-]+$/, {
+            message: 'must be lowercase letters or dashes without spaces'
+        }),  //fixed regex expression
+    description: z.string().min(10)
+})
+
+export async function createTopic(formState:number, formData:FormData){
+    const result = createTopicSchema.safeParse({
+        name: formData.get('name'),
+        description: formData.get('description')
+    });
+
+    if(!result.success){
+        console.log(result.error.flatten().fieldErrors);
+    }
+
+    return 10;
+}
+```
