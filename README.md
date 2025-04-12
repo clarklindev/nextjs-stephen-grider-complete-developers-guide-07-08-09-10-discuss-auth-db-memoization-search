@@ -1022,3 +1022,79 @@ export async function createTopic(formData:FormData){
     //TODO: revalidate the homepage
 }
 ```
+
+## 83. adding validation with zod
+- using zod
+- z variable: `import {z} from 'zod'`
+- to use zod we create a schema object -> which gives us a createTopicSchema `validator`
+
+```ts
+const createTopicSchema = z.object({
+  name: z.string().min(3).regex(/a-z-/),
+  description: z.string().min(10)
+})
+```
+
+### installing zod
+- pnpm i zod
+
+
+<img
+src='exercise_files/83-how-zod-schema-works.png'
+alt='83-how-zod-schema-works.png'
+width=600
+/>
+
+### how zod validation works
+- with createTopicSchema, we have access to safeParse() function which we can pass in data
+  - if data is valid -> output is data property with the schema object's attributes
+  - if data is invalid -> output is and error property with issues attribute (array)
+- ts wants us to check on !result.success first..
+
+```tsx
+//actions/create-topic.ts
+'use server';
+
+import { z } from 'zod';
+
+
+const createTopicSchema = z.object({
+    name: z
+        .string()
+        .min(3)
+        .regex(/^[a-z-]+$/, {
+            message: 'must be lowercase letters or dashes without spaces'
+        }),  //fixed regex expression
+    description: z.string().min(10)
+})
+
+export async function createTopic(formData:FormData){
+    const result = createTopicSchema.safeParse({
+        name: formData.get('name'),
+        description: formData.get('description')
+    });
+
+    if(!result.success){
+        console.log(result.error.flatten().fieldErrors);
+    }
+}
+```
+
+- gives us errors like:
+
+### difficult to map: result.error
+- result.error
+<img
+src='exercise_files/83-errors-result.error-difficult-to-map.pngs'
+alt='83-errors-result.error-difficult-to-map.png'
+width=600
+/>
+
+### easy to work with: result.error.flatten().fieldErrors
+- result.error.flatten().fieldErrors
+- returns a plain object that has the prop and its value array of errors for that named input
+<img
+src='exercise_files/83-errors-result.error.flatten().fieldErrors-plain-object.png'
+alt='83-errors-result.error.flatten().fieldErrors-plain-object.png'
+width=600
+/>
