@@ -797,3 +797,143 @@ src='exercise_files/78-page-is-dynamic-reminder.png'
 alt='78-page-is-dynamic-reminder.png'
 width=600
 />
+
+## 79. static caching while using auth
+
+<img
+src='exercise_files/79-dynamic-when-accessing-cookies.png'
+alt='79-dynamic-when-accessing-cookies.png'
+width=600
+/>
+
+### FIX changing the header (make page static)
+- TODO: adjust code so we can still use header in layout and header can still use authentication (handle cookies) but make page static at buildtime
+- FIX: move auth to client component (HeaderAuth) that will handle authentication via useSession() hook
+- useSession() does not handle cookies/ directly access cookies -> it makes a request to the backend to figure out the auth status.
+
+<img
+src='exercise_files/79-fix-move-auth-to-client-component.png'
+alt='79-fix-move-auth-to-client-component.png'
+width=600
+/>
+
+
+<img
+src='exercise_files/68-signin-signout-check-auth-status.png'
+alt='68-signin-signout-check-auth-status.png'
+width=600
+/>
+
+- components/header-auth.tsx
+- because it is a client component, we use useSession() hook
+
+```ts
+//components/header-auth.tsx
+'use client';
+
+import Link from 'next/link';
+import * as actions from '@/actions';
+// import {auth } from '@/auth';
+import {useSession} from 'next-auth/react';
+
+import {
+    Navbar,
+    NavbarBrand,
+    NavbarContent,
+    NavbarItem,
+    Input,
+    Button,
+    Avatar,
+    Popover,
+    PopoverTrigger,
+    PopoverContent
+} from '@nextui-org/react';
+
+export default function HeaderAuth(){
+    //figure authentication
+    const session = useSession();
+    let authContent: React.ReactNode;
+
+    if(session.status === "loading"){
+        authContent === null;
+    }
+    else if(session.data?.user){
+        authContent = 
+          <Popover placement="left">
+              <PopoverTrigger>
+                  <Avatar src={session.data.user.image || ''}/>
+              </PopoverTrigger>
+              <PopoverContent>
+                  <div className="p-4">
+                      <form action={actions.signOut}>
+                          <Button type="submit">Sign out</Button>
+                      </form>
+                  </div>
+              </PopoverContent>
+          </Popover>
+      
+      }else{
+        authContent = <>
+          <NavbarItem>
+              <form action={actions.signIn}>
+                  <Button type="submit" color="secondary" variant="bordered">
+                      sign in
+                  </Button>
+              </form>
+          </NavbarItem>
+          <NavbarItem>
+              <form action={actions.signOut}>
+                  <Button type="submit" color="primary" variant="flat">
+                      sign up
+                  </Button>
+              </form>
+          </NavbarItem>
+        </>
+      }
+
+    return authContent;
+}
+```
+
+```ts
+//components/header.tsx
+import Link from 'next/link';
+
+import {
+    Navbar,
+    NavbarBrand,
+    NavbarContent,
+    NavbarItem,
+    Input,
+} from '@nextui-org/react';
+
+import HeaderAuth from '@/components/header-auth';
+
+export default function Header(){
+    return (
+        <Navbar className="shadow mb-6">
+            <NavbarBrand>
+                <Link href="/" className="font-bold">Discuss</Link>
+            </NavbarBrand>
+            <NavbarContent justify="center">
+                <NavbarItem>
+                    <Input/>
+                </NavbarItem>
+            </NavbarContent>
+            <NavbarContent justify="end">
+                <HeaderAuth/>
+            </NavbarContent>
+        </Navbar>
+    );
+}
+```
+
+### fixing when we load up and not sure of authentication state 
+- session.status gives us 'loading' state when we arent sure whats the state yet when starting up.
+
+```ts
+if(session.status === "loading"){
+      authContent === null;
+  }
+else {} 
+```
