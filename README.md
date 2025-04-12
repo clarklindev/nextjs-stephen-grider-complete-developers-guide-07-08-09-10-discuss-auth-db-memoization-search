@@ -1098,3 +1098,17 @@ src='exercise_files/83-errors-result.error.flatten().fieldErrors-plain-object.pn
 alt='83-errors-result.error.flatten().fieldErrors-plain-object.png'
 width=600
 />
+
+## 84. reminder on the UseFOrmState Hook
+- useFormState sends FormState with the FormData up to server action, so that it can communicate data back
+- define some initial state for formState
+- form date is encoded with FormData object
+- form state gets embedded with the formData up to server action
+- do validation with z
+- just return the return object from zod.
+
+<img
+src='exercise_files/84-useFormState.png'
+alt='84-useFormState.png'
+width=600
+/>  
