@@ -771,11 +771,29 @@ export default async function Header(){
                 </NavbarItem>
             </NavbarContent>
             <NavbarContent justify="end">
-                {
-                    authContent
-                }
+              {
+                authContent
+              }
             </NavbarContent>
         </Navbar>
     );
 }
 ```
+
+## 78. more cache issues
+- build result is that everything is dynamic... why?
+   - because everypage is wrapped by 'layout' and layout calls auth `const session = await auth()` 
+   - nextauth will read/access/modify cookies inside of the request 
+   - therefore every route that includes the header will be marked during build as dynamic
+
+<img
+src='exercise_files/78-build-result.png'
+alt='78-build-result.png'
+width=600
+/>
+
+<img
+src='exercise_files/78-page-is-dynamic-reminder.png'
+alt='78-page-is-dynamic-reminder.png'
+width=600
+/>
