@@ -1298,7 +1298,7 @@ export default function TopicCreateForm() {
         <Button color="primary">Create a Topic</Button>
       </PopoverTrigger>
       <PopoverContent>
-        <form onSubmit={handleSubmit} noValidate>
+        <Form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-4 p-4 w-80">
             <h3 className="text-lg">Create a Topic</h3>
             <Input
@@ -1319,10 +1319,19 @@ export default function TopicCreateForm() {
             />
             <Button type="submit">Submit</Button>
           </div>
-        </form>
+        </Form>
       </PopoverContent>
     </Popover>
   );
 }
 
 ```
+
+## 89. Displaying validation errors
+- because we use `nextui`, there is validation handling as part of the Input (see above)
+
+<img
+src='exercise_files/89-screenshot-validation-at-work.png'
+alt='89-screenshot-validation-at-work.png'
+width=600
+/>
