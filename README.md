@@ -1118,15 +1118,29 @@ width=600
 - implementing the useFormState hook in our code. 
 - if you are using Next.js v15, then, you will need to make a slight change to the import and name.
 
-- Change the import from this:
+- `components/topic/topic-create-form.tsx` -> Change the import from this:
 ```ts
-//import { useFormState } from 'react-dom';
+//import { useFormState } from 'react-dom'; //old pre-next15 method
 import { useActionState } from "react";
 ```
 
 - Change the hook name from this:
 ```ts
-// const [formState, action] = useFormState(actions.createTopic, 5);
+// const [formState, action] = useFormState(actions.createTopic, 5);  //old pre-next15 method
   const [formState, action] = useActionState(actions.createTopic, 5);
 ```
 
+## 86. Fixing UseFormState Type Errors
+- components/topics/topic-create-form.tsx
+- NOTE: this lesson uses intial state with value eg. 5
+
+- 'use client';
+- `const [formState, action] = useActionState(actions.createTopic, 5);`
+- formState becomes first argument in server action!!!
+- TAKEAWAY FROM THE LESSON, the type here of useActionState initial state (2nd prop) '5' MUST BE the same typescript type returned inside server form action AND the first argument.
+
+<img
+src='exercise_files/86-fixing-formStateErrors.png'
+alt='86-fixing-formStateErrors.png'
+width=600
+/>
