@@ -1335,3 +1335,45 @@ src='exercise_files/89-screenshot-validation-at-work.png'
 alt='89-screenshot-validation-at-work.png'
 width=600
 />
+
+## 90. handling general form errors
+- adding `_form` to the interface to handle general errors eg. not authenticated
+
+- NOTE: discussion Error messages remain after Popover is closed and reopened:
+  https://www.udemy.com/course/next-js-the-complete-developers-guide/learn/#questions/20995848
+
+```ts
+//actions/create-topic.ts
+import {auth } from '@/auth';
+
+interface CreateTopicFormState {
+  errors: {
+      name?: string[];
+      description?: string[];
+      _form?: string[]
+  }
+}
+
+//...
+const session = await auth();
+  if (!session || !session.user){
+    return {
+        errors:{
+            _form: ['you must be signed in to do this..']
+        }
+    }
+}
+
+```
+
+```tsx
+//components/topic/topic-create-form.tsx
+//...
+{formState.errors._form ? (
+
+<div className="rounded p-2 bg-red-200 border border-red-400">
+    {formState.errors._form?.join(", ")}
+</div>
+) : null}
+
+```
