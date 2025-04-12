@@ -231,21 +231,21 @@ npm install --save-exact @auth/core@0.18.1 @auth/prisma-adapter@1.0.6 next-auth@
 ```
 
 ## 65. Next-Auth Setup
-## 4. make a auth.ts in src/ and setup NextAuth and PrismaAdapter in there
+## 4. create auth.ts in src/ and setup NextAuth and PrismaAdapter in there
 
 - inside schema.prisma -> models automatically used by `PrismaAdapter`
-    - model Account
-    - model Session
+    - model Account  
+    - model Session  
     - model User 
-    - model VerificationToken
+    - model VerificationToken  
 
 - when signing up will need the specific User properties (see `prisma/schema.prima` model):
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    name          String?  
+    email         String?   @unique  
+    emailVerified DateTime?  
+    image         String?  
+    accounts      Account[]  
+    sessions      Session[]  
 
 ```ts
 //src/auth.ts
@@ -287,7 +287,8 @@ export const {
 ```
 
 ## 66. The Theory Behind OAuth
-- set up the `app/api/auth[...nextauth]/route.ts` file to handle the request between Githubs Servers and ours
+- set up the `app/api/auth/[...nextauth]/route.ts` file to handle the request between Githubs Servers and ours
+  - NOTE: [...nextauth] means catch all route in nextjs
 - `route.ts` file inside app/ is special in that you can export `GET` and `POST` functions (implement API handlers inside Nextjs app)
 - we usually use actionhandlers within our own apps. 
 - we would use route.ts to create GET and POST for outside servers to access our app automatically (eg. github server) 
@@ -1083,9 +1084,9 @@ export async function createTopic(formData:FormData){
 - gives us errors like:
 
 ### difficult to map: result.error
-- result.error
+- result.error  
 <img
-src='exercise_files/83-errors-result.error-difficult-to-map.pngs'
+src='exercise_files/83-errors-result.error-difficult-to-map.png'
 alt='83-errors-result.error-difficult-to-map.png'
 width=600
 />
@@ -1099,7 +1100,7 @@ alt='83-errors-result.error.flatten().fieldErrors-plain-object.png'
 width=600
 />
 
-## 84. reminder on the UseFOrmState Hook
+## 84. reminder on the UseFormState Hook
 - useFormState sends FormState with the FormData up to server action, so that it can communicate data back
 - define some initial state for formState
 - form date is encoded with FormData object
@@ -1243,7 +1244,11 @@ export async function createTopic(formState:CreateTopicFormState, formData:FormD
 
 2. Create a handleSubmit function
 ```ts
- function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const [formState, action] = useActionState(actions.createTopic, {
+    errors: {},
+  });
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     startTransition(() => {
@@ -1454,4 +1459,150 @@ try{
 revalidatePath('/');
 redirect(paths.topicShow(topic.slug));
 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+---
+# section 08 Using Data - database queries
+
+- the hook: useActionState to help wire up a loading spinner when submitting our form
+- React 19 (which Next.js 15 uses by default) introduces some major breaking changes in regards to form submissions.
+- To resolve the broken loading spinner, we will need to make a few changes.
+
+# topic-create-form.tsx
+## 1. Return isPending from useActionState:
+
+```ts
+const [formState, action, isPending] = useActionState(actions.createTopic, {
+```
+
+## 2. Pass isPending from useActionState to the isLoading prop of the FormButton component:
+
+```ts
+<FormButton isLoading={isPending}>Save</FormButton>
+
+```
+
+# form-button.tsx
+1. Add isLoading to the interface:
+```ts
+interface FormButtonProps {
+  children: React.ReactNode;
+  isLoading: boolean;
+}
+```
+
+2. Remove all useFormStatus logic and import
+
+3. Receive the isLoading prop in the FormButton Component
+```ts
+export default function FormButton({ children, isLoading }: FormButtonProps) {
+```
+
+4. Pass isLoading instead of pending to the isLoading prop of the Button component
+```ts
+<Button type="submit" isLoading={isLoading}>
+
+```
+
+## Completed topic-create-form.tsx
+
+```ts
+"use client";
+ 
+import { useActionState, startTransition } from "react";
+ 
+import {
+  Input,
+  Button,
+  Textarea,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  Form,
+} from "@nextui-org/react";
+import * as actions from "@/actions";
+import FormButton from "@/components/common/form-button";
+ 
+export default function TopicCreateForm() {
+  const [formState, action, isPending] = useActionState(actions.createTopic, {
+    errors: {},
+  });
+ 
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    startTransition(() => {
+      action(formData);
+    });
+  }
+ 
+  return (
+    <Popover placement="left">
+      <PopoverTrigger>
+        <Button color="primary">Create a Topic</Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <Form onSubmit={handleSubmit}>
+          <div className="flex flex-col gap-4 p-4 w-80">
+            <h3 className="text-lg">Create a Topic</h3>
+            <Input
+              name="name"
+              label="Name"
+              labelPlacement="outside"
+              placeholder="Name"
+              isInvalid={!!formState.errors.name}
+              errorMessage={formState.errors.name?.join(", ")}
+            />
+            <Textarea
+              name="description"
+              label="Description"
+              labelPlacement="outside"
+              placeholder="Describe your topic"
+              isInvalid={!!formState.errors.description}
+              errorMessage={formState.errors.description?.join(", ")}
+            />
+ 
+            {formState.errors._form ? (
+              <div className="rounded p-2 bg-red-200 border border-red-400">
+                {formState.errors._form?.join(", ")}
+              </div>
+            ) : null}
+ 
+            <FormButton isLoading={isPending}>Save</FormButton>
+          </div>
+        </Form>
+      </PopoverContent>
+    </Popover>
+  );
+}
+```
+
+## Completed form-button.tsx
+```ts
+"use client";
+import { Button } from "@nextui-org/react";
+ 
+interface FormButtonProps {
+  children: React.ReactNode;
+  isLoading: boolean;
+}
+ 
+export default function FormButton({ children, isLoading }: FormButtonProps) {
+  return (
+    <Button type="submit" isLoading={isLoading}>
+      {children}
+    </Button>
+  );
+}
 ```
