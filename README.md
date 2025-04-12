@@ -1621,3 +1621,52 @@ export default function FormButton({ children, isLoading }: FormButtonProps) {
   );
 }
 ```
+
+## 93. showing loading spinners
+
+<img
+src='exercise_files/93-useFormStatus-showing-loading-spinners.png'
+alt='93-useFormStatus-showing-loading-spinners.png'
+width=600
+/>
+
+### useFormStatus hook
+- looks at form in `parent` component, cant be used directly in the form, should be in eg. the button of a form
+- ie. cant use it in component rendering the form...eg. TopicCreateForm
+
+#### the child of a form
+- we make a child component (FormButton) that will show a button meant to show inside a form.
+- this button will make use of `useFormStatus` -> looks at closest parent form element and tries to figure out status of form.
+- you get back a `formStatus` object which gives the status of the form
+- components/common/form-button.tsx
+- const {pending} = useFormStatus(); gives status of form
+
+```ts
+//components/common/form-button.tsx
+'use client'
+
+import {useFormStatus} from 'react-dom';
+import { Button } from '@nextui-org/react';
+
+interface FormButtonProps {
+    children: React.ReactNode;
+}
+
+export default function FormButton({children}:FormButtonProps){
+    const {pending} = useFormStatus();
+    return <Button type="submit" isLoading={pending}>
+        {children}
+    </Button>
+}
+```
+
+```tsx
+//components/topics/topic-create-form.tsx
+import FormButton from '@/components/common/form-button';
+
+
+//...
+<FormButton>
+  Save
+</FormButton>
+```
