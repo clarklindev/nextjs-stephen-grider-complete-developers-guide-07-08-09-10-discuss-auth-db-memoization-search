@@ -637,6 +637,8 @@ alt='75-auth-header.png'
 width=600
 />
 
+## 76. Displaying the Sign In and Sign Out Buttons
+
 - also need to determine if we are authenticated (from a server component) RECALL:
   - import {auth } from '@/auth';
   - const session = await auth();
