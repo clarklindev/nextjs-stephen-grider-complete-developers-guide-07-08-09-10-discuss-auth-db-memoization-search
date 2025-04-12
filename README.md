@@ -666,6 +666,13 @@ import {
 export default async function Header(){
     const session = await auth();
 
+    let authContent: React.ReactNode;
+    if(session?.user){
+      authContent = <Avatar src={session.user.image || ''}/>
+    }else{
+      authContent = <div>Signin/signup</div>
+    }
+
     return (
         <Navbar className="shadow mb-6">
             <NavbarBrand>
@@ -679,7 +686,7 @@ export default async function Header(){
             <NavbarContent justify="end">
                 <NavbarItem>
                     {
-                        session?.user ? <div>signed in</div>: <div>signed out</div>
+                        authContent
                     }
                 </NavbarItem>
             </NavbarContent>
