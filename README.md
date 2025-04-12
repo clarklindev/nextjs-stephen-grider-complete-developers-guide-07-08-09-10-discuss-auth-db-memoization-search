@@ -1230,3 +1230,99 @@ export async function createTopic(formState:CreateTopicFormState, formData:FormD
     };
 }
 ```
+
+## 88. Breaking Changes in Forms with React 19
+- TODO: implement displaying validation errors when submitting our form
+- React 19 (which Next.js 15 uses by default) introduces some major breaking changes regarding form submissions.
+  -  forms are now reset after submission by default.
+  - There is also a bug between NextUI/React and native Next forms.
+- FIX: `topic-create-form.tsx`
+
+1. import the startTransition hook
+`import { useActionState, startTransition } from "react";`
+
+2. Create a handleSubmit function
+```ts
+ function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    startTransition(() => {
+      action(formData);
+    });
+  }
+```
+
+3. Pass the new handleSubmit function to the onSubmit prop to opt out of the form reset and pass the noValidate attribute:
+```ts
+  <form onSubmit={handleSubmit} noValidate>
+    ...
+  </form>
+```
+
+### full code
+//components/topics/topic-create-form.tsx
+
+```ts
+//components/topics/topic-create-form.tsx
+"use client";
+ 
+import { useActionState, startTransition } from "react";
+ 
+import {
+  Input,
+  Button,
+  Textarea,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  Form,
+} from "@nextui-org/react";
+import * as actions from "@/actions";
+ 
+export default function TopicCreateForm() {
+  const [formState, action] = useActionState(actions.createTopic, {
+    errors: {},
+  });
+ 
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    startTransition(() => {
+      action(formData);
+    });
+  }
+ 
+  return (
+    <Popover placement="left">
+      <PopoverTrigger>
+        <Button color="primary">Create a Topic</Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <form onSubmit={handleSubmit} noValidate>
+          <div className="flex flex-col gap-4 p-4 w-80">
+            <h3 className="text-lg">Create a Topic</h3>
+            <Input
+              name="name"
+              label="Name"
+              labelPlacement="outside"
+              placeholder="Name"
+              isInvalid={!!formState.errors.name}
+              errorMessage={formState.errors.name?.join(", ")}
+            />
+            <Textarea
+              name="description"
+              label="Description"
+              labelPlacement="outside"
+              placeholder="Describe your topic"
+              isInvalid={!!formState.errors.description}
+              errorMessage={formState.errors.description?.join(", ")}
+            />
+            <Button type="submit">Submit</Button>
+          </div>
+        </form>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+```
