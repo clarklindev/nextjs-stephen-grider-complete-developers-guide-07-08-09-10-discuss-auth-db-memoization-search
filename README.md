@@ -2091,15 +2091,89 @@ let post:Post;
 ## 106. merging a few files
 
 <img
-src='exercise_files/106-merging-a-few-files-1.png'
-alt='106-merging-a-few-files-1.png'
-width=600
-/>
-
-<img
 src='exercise_files/106-merging-a-few-files-2.png'
 alt='106-merging-a-few-files-2.png'
 width=600
 />
 
 - extract files.zip into working folder
+
+## 107. Considerations Around Where to Fetch Data
+- PostList
+
+<img
+src='exercise_files/106-merging-a-few-files-1.png'
+alt='106-merging-a-few-files-1.png'
+width=600
+/>
+
+<img
+src='exercise_files/107-which-component-should-make-query.png'
+alt='107-which-component-should-make-query.png'
+width=600
+/>
+
+- view a topic 
+- where we get the information from
+
+<img
+src='exercise_files/107-view-a-topic.png'
+alt='107-view-a-topic.png'
+width=600
+/>
+
+- the data we need for Post list component
+
+<img
+src='exercise_files/107-where-to-fetch-data.png'
+alt='107-where-to-fetch-data.png'
+width=600
+/>
+
+### higher up (TopicShowPage) -> data fetch in Page
+- pros + cons
+- pros: 
+  - easy to see what data route needs
+  - easier to make child components reusable
+  - easier to avoid n+1 queries (more fetches after intial fetch when we missing data we need)
+    - we can handle N+1 easier by writing descriptive props interfaces
+- cons: 
+  - overfetch data
+  - duplicate code in other pages
+  - is difficult to write the interface for complex query data
+  - slower page load speed
+
+## 108. or data fetching in child components (PostList)
+- @9min 07sec
+- PROS 
+  - easier to build skeleton pages (placeholder)
+- CONS
+  - child component implementation is locked in (not so reusable)
+
+## 109. recommended dat fetching
+- inbetween aproach -> (option 1 + option 2) mix
+- @1min
+
+
+- create a new file Post Query file 
+  - separate file that lists all the queries that can provide data to "PostList" 
+  - create a type PostWithData
+
+- PostList expects to receive a function that will return with PostWithData[]
+
+<img
+src='exercise_files/109-PostList-receive-a-function-return-PostWithData[].png'
+alt='109-PostList-receive-a-function-return-PostWithData[].png'
+width=600
+/>
+
+- the parent component can decide which function to run and pass as function to PostList
+- the child component is in charge of implementing the fetching
+
+<img
+src='exercise_files/109-recommended-data-fetching.png'
+alt='109-recommended-data-fetching.png'
+width=600
+/>
+
+
