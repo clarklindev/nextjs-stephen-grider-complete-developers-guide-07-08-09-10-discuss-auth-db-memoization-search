@@ -1746,12 +1746,6 @@ alt='96-view-a-topic.png'
 width=600
 />
 
-<img
-src='exercise_files/96-create-a-post.png'
-alt='96-create-a-post.png'
-width=600
-/>
-
 - app/topics/[slug]/page.tsx
 - the slug is passed as a prop to our page
 
@@ -1783,9 +1777,33 @@ export default async function TopicShowPage({params}:TopicShowPageProps){
 - useFormState hook -> useActionState  Next.js v15 
 
 Change the import from this:
-
+```ts
 import { useFormState } from 'react-dom';
-
+```
 to this:
-
+```ts
 import { useActionState } from "react";
+```
+
+## 98. displaying a creation form
+
+<img
+src='exercise_files/96-create-a-post.png'
+alt='96-create-a-post.png'
+width=600
+/>
+
+- displaying a creation form
+- similar to topics
+  - title
+  - content
+- src/components/posts/post-create-form.tsx
+
+```ts
+//src/components/posts/post-create-form.tsx
+
+export default function PostCreateForm(){
+    return <div>post create form</div>
+}
+
+```
