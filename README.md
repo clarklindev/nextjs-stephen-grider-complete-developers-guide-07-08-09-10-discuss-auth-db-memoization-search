@@ -2018,3 +2018,21 @@ export async function createPost(
 
 }
 ```
+
+## 103. Type 'string | undefined' is not assignable to type 'string' Fix
+- TODO:  finishing up `create-post` action.
+- Due to some new type strictness, make a small adjustment to our conditional check by adding !session.user.id
+
+- the FIX:
+```
+
+  const session = await auth();
+  if (!session || !session.user || !session.user.id) {
+    return {
+      errors: {
+        _form: ["You must be signed in to do this"],
+      },
+    };
+  }
+ 
+```
