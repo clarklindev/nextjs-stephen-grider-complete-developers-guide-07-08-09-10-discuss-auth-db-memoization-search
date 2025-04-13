@@ -1670,3 +1670,42 @@ import FormButton from '@/components/common/form-button';
   Save
 </FormButton>
 ```
+
+## 94. fetching and listing content from Prisma
+
+<img
+src='exercise_files/94-fetching-and-listing-content-from-prisma-topics.png'
+alt='94-fetching-and-listing-content-from-prisma-topics.png'
+width=600
+/>
+
+- TODO: fetch topics from prisma
+- components/topics/topic-list.tsx
+
+```ts
+//components/topics/topic-list.tsx
+import Link from 'next/link';
+import {Chip} from '@nextui-org/react';
+import {db} from '@/db';
+import paths from '@/paths';
+
+export default async function TopicList(){
+    const topics = await db.topic.findMany();
+
+    const renderedTopics = topics.map(topic=>{
+        return (
+            <div key={topic.id}>
+                <Link href={paths.topicShow(topic.slug)}>
+                    <Chip color="warning" variant="shadow">
+                        {topic.slug}
+                    </Chip>
+                </Link>
+            </div>
+        )
+    });
+
+    return <div className="flex flex-row gap-2 flex-wrap">
+        {renderedTopics}
+    </div>
+}
+```

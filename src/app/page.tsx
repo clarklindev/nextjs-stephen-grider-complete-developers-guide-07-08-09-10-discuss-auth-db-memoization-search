@@ -1,5 +1,7 @@
 import TopicCreateForm from '@/components/topics/topic-create-form';
 import {auth} from '@/auth';
+import TopicList from '@/components/topics/topic-list';
+import { Divider } from '@nextui-org/react';
 
 export default async function Home() {
   const session = await auth();
@@ -11,7 +13,13 @@ export default async function Home() {
       </div>
       
       {
-        session?.user ? <TopicCreateForm/> : <></>
+        session?.user ? 
+          <div className="border shadow py-3 px-2">
+            <TopicCreateForm/>
+            <Divider className="my-2"/>
+            <TopicList/>
+          </div>
+        : <></>
       }
     
     </div>
