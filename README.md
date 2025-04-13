@@ -1709,3 +1709,31 @@ export default async function TopicList(){
     </div>
 }
 ```
+
+## 95. More Async Dynamic Params in Next.js 15
+- Next.js v15 -> we must `await` params or searchParams before accessing
+- https://nextjs.org/docs/messages/sync-dynamic-apis
+
+- `app/topics/[slug]/page.tsx`: 
+
+```ts
+export default function TopicShowPage({ params }: TopicShowPageProps) {
+const { slug } = params;
+```
+
+- change to this:
+```ts
+export default async function TopicShowPage({ params }: TopicShowPageProps) {
+  const { slug } = await params;
+  //...
+}
+```
+
+- we need to update the Interface and wrap the params in a Promise:
+```ts
+interface TopicShowPageProps {
+  params: Promise<{
+    slug: string;
+  }>;
+}
+```
