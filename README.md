@@ -2325,3 +2325,74 @@ export function fetchPostsByTopicSlug(slug:string){
 - it will unwrap that `Awaited<ReturnType<typeof fetchPostsByTopicSlug>>` and look at what the promise gets resolved with...
 - [number] -> because it resolves with an array and take the type of one element in the array
 - note: function return type removed -> `export function fetchPostsByTopicSlug(slug:string)`
+
+## 112. dont go crazy with reuse
+
+<img
+src='exercise_files/112-view-a-post.png'
+alt='112-view-a-post.png'
+width=600
+/>
+
+- `components/pots/post-show.tsx`
+```ts
+//components/pots/post-show.tsx
+import {db} from '@/db';
+import {notFound} from 'next/navigation';
+
+interface PostShowProps {
+  postId: string
+}
+
+export default async function PostShow({postId}: PostShowProps) {
+  const post = await db.post.findFirst({
+    where: {id: postId}
+  });
+
+  if(!post){
+    notFound();
+  }
+
+  return (
+    <div className="m-4">
+      <h1 className="text-2xl font-bold my-2">{post.title}</h1>
+      <p className="p-4 border rounded">{post.content}</p>
+    </div>
+  );
+}
+
+```
+
+- test: `src/app/topics/[slug]/posts/[postId]/page.tsx`
+
+```ts
+//src/app/topics/[slug]/posts/[postId]/page.tsx
+import Link from "next/link";
+import PostShow from "@/components/posts/post-show";
+import CommentList from "@/components/comments/comment-list";
+import CommentCreateForm from "@/components/comments/comment-create-form";
+import paths from "@/paths";
+
+interface PostShowPageProps {
+  params: Promise<{
+    slug: string;
+    postId: string;
+  }>;
+}
+
+export default async function PostShowPage({ params }: PostShowPageProps) {
+  const { slug, postId } = await params;
+
+  return (
+    <div className="space-y-3">
+      <Link className="underline decoration-solid" href={paths.topicShow(slug)}>
+        {"< "}Back to {slug}
+      </Link>
+      <PostShow />
+      {/* <CommentCreateForm postId={postId} startOpen /> */}
+      {/* <CommentList comments={comments} /> */}
+    </div>
+  );
+}
+
+```
