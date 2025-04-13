@@ -1827,3 +1827,115 @@ Then, pass the isPending prop to the FormButton:
 ```ts
 <FormButton isLoading={isPending}>Save</FormButton>
 ```
+
+## 100. Applying Validation to Post Creation
+- action handler for create post
+- actions/create-post.ts
+
+```ts
+//actions/create-post.ts
+'use server';
+
+import type {Post} from '@prisma/client';
+import {revalidatePath} from 'next/cache';
+import {redirect} from 'next/navigation';
+import {z} from 'zod';
+import {auth } from '@/auth';
+import {db} from '@/db';
+import paths from '@/paths';
+
+const createPostSchema = z.object({
+    title: z
+        .string()
+        .min(3),
+    content: z.string().min(10)
+});
+
+interface CreatePostFormState{
+    errors:{
+        title?: string[],
+        content?: string[],
+        _form?: string[]
+    }
+}
+
+export async function createPost(
+    formState:CreatePostFormState,
+    formData: FormData
+): Promise<CreatePostFormState>{
+    const result = createPostSchema.safeParse({
+            title: formData.get('title'),
+            content: formData.get('content')
+    });
+
+    if(!result.success){
+        return {
+            errors: result.error.flatten().fieldErrors
+        }
+    }
+
+    return {
+        errors:{}
+    }
+
+}
+```
+- then in components/posts/post-form.tsx
+
+```tsx
+'use client';
+
+import FormButton from '@/components/common/form-button';
+import {
+    Input,
+    Form,
+    Textarea
+} from '@nextui-org/react';
+import { useActionState, startTransition } from "react";
+
+import * as actions from '@/actions';
+
+const PostForm = ()=>{
+    const [formState, action, isPending ] = useActionState(actions.createPost, {errors:{}})
+
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        startTransition(() => {
+          action(formData);
+        });
+    }
+
+    return (
+        <Form onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-4 p-4 w-80">
+                <h3 className="text-lg">create a post</h3>
+
+                <Input
+                    isInvalid={!!formState.errors.title}
+                    errorMessage={formState.errors.title?.join(', ')}
+                    name="title"
+                    label="Title"
+                    labelPlacement="outside"
+                    placeholder="Title"
+                />
+                <Textarea
+                    isInvalid={!!formState.errors.content}
+                    errorMessage={formState.errors.content?.join(', ')}
+                    name="content"
+                    label="Content"
+                    labelPlacement="outside"
+                    placeholder="Content"
+                />
+                <FormButton isLoading={isPending}>create post</FormButton>
+
+            </div>
+        </Form>
+    )
+}
+
+export {PostForm};
+
+
+
+```
