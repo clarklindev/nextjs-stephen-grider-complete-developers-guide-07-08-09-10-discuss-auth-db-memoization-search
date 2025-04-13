@@ -2282,3 +2282,46 @@ export default async function TopicShowPage({params}:TopicShowPageProps){
 
 
 ```
+## 111. alternative type names and query definitions
+
+### alternative type names
+- PostWithDetails
+- EnrichedPost
+- etc
+- type should describe what is being returned from queries
+- PostWithListData
+
+- db/queries/posts.ts
+
+```ts
+//db/queries/posts.ts
+import type {Post} from '@prisma/client';
+import {db} from '@/db';
+
+// export type PostWithData = (
+//     Post & {
+//         topic: {slug: string};
+//         user: {name: string | null};
+//         _count: {comments: number};
+//     }
+// )
+
+export type PostWithData = Awaited<ReturnType<typeof fetchPostsByTopicSlug>>[number];
+
+export function fetchPostsByTopicSlug(slug:string){
+    return db.post.findMany({
+        where: {topic: {slug}},
+        include:{
+            topic:{select: {slug: true}},
+            user: {select: {name:true}},
+            _count: {select: {comments: true}}
+        }
+    });
+}
+```
+### Alternative query defintion
+- `export type PostWithData = Awaited<ReturnType<typeof fetchPostsByTopicSlug>>[number];`
+- looks at `typeof fetchPostsByTopicSlug`, looks at what gets returned `ReturnType<typeof fetchPostsByTopicSlug>`,
+- it will unwrap that `Awaited<ReturnType<typeof fetchPostsByTopicSlug>>` and look at what the promise gets resolved with...
+- [number] -> because it resolves with an array and take the type of one element in the array
+- note: function return type removed -> `export function fetchPostsByTopicSlug(slug:string)`
