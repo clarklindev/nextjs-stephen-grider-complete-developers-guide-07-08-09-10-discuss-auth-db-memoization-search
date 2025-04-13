@@ -2401,4 +2401,65 @@ export default async function PostShowPage({ params }: PostShowPageProps) {
 
 ```
 
+## 114. Recursively Rendering Components
+- `components/comments/comment-show.tsx`
 
+<img
+src='exercise_files/113-recursive-component.png'
+alt='113-recursive-component.png'
+width=600
+/>
+
+<img
+src='exercise_files/114-example-ui-comment-show.png'
+alt='114-example-ui-comment-show.png'
+width=600
+/>
+
+
+### Goal:
+- To display a nested list of comments at the bottom of a page, where each comment can have replies, and those replies can have their own replies — infinite nesting.
+
+### Components:
+- CommentList – the wrapper at the bottom of the page (wrapper for CommentShow)
+- CommentShow – recursively renders individual comments and their children (recursive component)
+
+### Recursive Structure:
+
+<img
+src='exercise_files/114-recursively-rendering-components-fulldiagram.png'
+alt='114-recursively-rendering-components-fulldiagram.png'
+width=600
+/>
+
+<img
+src='exercise_files/114-db-list-of-comments.png'
+alt='114-db-list-of-comments.png'
+width=600
+/>
+
+- Comments are stored with a parentId field.
+- Top-level comments have parentId = null.
+- Replies have parentId pointing to the parent comment's id.
+- CommentList finds top-level comments and renders CommentShow for each.
+
+<img
+src='exercise_files/114-recursively-rendering-components.png'
+alt='114-recursively-rendering-components.png'
+width=600
+/>
+
+- Each CommentShow looks for comments where parentId matches its id, then renders more CommentShow components for its children.
+
+<img
+src='exercise_files/114-CommentShow-parentId-matches-its-id.png'
+alt='114-CommentShow-parentId-matches-its-id.png'
+width=600
+/>
+
+### Current Problem:
+- There's no centralized way to share the full list of comments with all CommentShow components.
+
+### Upcoming Solution Strategies:
+- Basic Prop Drilling – pass the full list of comments as props through each component.
+- Alternate Approach using Next.js – to demonstrate an interesting (though slightly less elegant) feature of Next.js.
