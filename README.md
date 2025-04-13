@@ -1807,3 +1807,23 @@ export default function PostCreateForm(){
 }
 
 ```
+
+## 99. FormButton and Hook Name Update
+- post form -> make adjustments
+- topic-create-form.tsx 
+  - change the hook name to useActionState
+  - an additional property called isPending pulled from useActionState
+
+- change this...
+```ts
+  const [formState, action] = useFormState(actions.createPost, {
+```
+- to this...
+```ts
+  const [formState, action, isPending] = useActionState(actions.createTopic, {
+```
+
+Then, pass the isPending prop to the FormButton:
+```ts
+<FormButton isLoading={isPending}>Save</FormButton>
+```
