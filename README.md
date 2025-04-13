@@ -2365,6 +2365,10 @@ export default async function PostShow({postId}: PostShowProps) {
 
 - test: `src/app/topics/[slug]/posts/[postId]/page.tsx`
 
+
+## 113. Comment Creation
+- given `import CommentCreateForm from "@/components/comments/comment-create-form";` 
+
 ```ts
 //src/app/topics/[slug]/posts/[postId]/page.tsx
 import Link from "next/link";
@@ -2389,10 +2393,12 @@ export default async function PostShowPage({ params }: PostShowPageProps) {
         {"< "}Back to {slug}
       </Link>
       <PostShow />
-      {/* <CommentCreateForm postId={postId} startOpen /> */}
+      <CommentCreateForm postId={postId} startOpen />
       {/* <CommentList comments={comments} /> */}
     </div>
   );
 }
 
 ```
+
+
