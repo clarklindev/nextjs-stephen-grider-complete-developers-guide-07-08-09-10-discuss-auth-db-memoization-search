@@ -2176,4 +2176,109 @@ alt='109-recommended-data-fetching.png'
 width=600
 />
 
+## 110. define in parent, fetch in child
 
+### Step 1
+- create post query file
+- query functions that will return data for PostList component
+- db/queries/posts.ts
+
+<img
+src='exercise_files/110-post-query-file.png'
+alt='110-post-query-file.png'
+width=600
+/>
+
+```ts
+//db/queries/posts.ts
+import type {Post} from '@prisma/client';
+import {db} from '@/db';
+
+export type PostWithData = (
+    Post & {
+        topic: {slug: string};
+        user: {name: string | null};
+        _count: {comments: number};
+    }
+)
+
+export function fetchPostsByTopicSlug(slug:string): Promise<PostWithData[]>{
+    return db.post.findMany({
+        where: {topic: {slug}},
+        include:{
+            topic:{select: {slug: true}},
+            user: {select: {name:true}},
+            _count: {select: {comments: true}}
+        }
+    });
+}
+```
+
+
+### Step 2
+
+<img
+src='exercise_files/109-PostList-receive-a-function-return-PostWithData[].png'
+alt='109-PostList-receive-a-function-return-PostWithData[].png'
+width=600
+/>
+
+```ts
+//components/posts/post-list.tsx
+
+interface PostListProps {
+  fetchData: ()=> Promise<PostWithData[]>
+}
+
+export default async function PostList({fetchData}:PostListProps) {
+  const posts = await fetchData();
+```
+
+### Step 3
+
+<img
+src='exercise_files/109-recommended-data-fetching.png'
+alt='109-recommended-data-fetching.png'
+width=600
+/>
+
+- pass a function as fetchData for PostList 
+- ie specify data to fetch in parent but fetch in children
+
+<img
+src='exercise_files/110-step3.png'
+alt='110-step3.png'
+width=600
+/>
+
+```ts
+//app/topics/[slug]/page.tsx
+import PostCreateForm from "@/components/posts/post-create-form";
+import PostList from '@/components/posts/post-list';
+import {fetchPostsByTopicSlug} from '@/db/queries/posts';
+
+interface TopicShowPageProps {
+    params: Promise<{slug: string}>
+}
+
+export default async function TopicShowPage({params}:TopicShowPageProps){
+    const {slug} = await params;
+
+    return (
+        <div className="grid grid-cols-4 gap-4 p-4">
+          <div className="col-span-3">
+            <h1 className="text-2xl font-bold mb-2">
+              {slug}  
+            </h1>
+            <PostList fetchData={()=> fetchPostsByTopicSlug(slug)}/>
+          </div>
+    
+          <div>
+            <PostCreateForm slug={slug}/>
+          </div>
+        </div>
+    );
+}
+
+
+```
