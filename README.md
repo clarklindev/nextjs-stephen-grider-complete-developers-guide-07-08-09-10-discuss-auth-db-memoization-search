@@ -1737,3 +1737,44 @@ interface TopicShowPageProps {
   }>;
 }
 ```
+
+## 96. Scaffolding the Topic Show Page
+
+<img
+src='exercise_files/96-view-a-topic.png'
+alt='96-view-a-topic.png'
+width=600
+/>
+
+<img
+src='exercise_files/96-create-a-post.png'
+alt='96-create-a-post.png'
+width=600
+/>
+
+- app/topics/[slug]/page.tsx
+- the slug is passed as a prop to our page
+
+```tsx
+//app/topics/[slug]/page.tsx
+interface TopicShowPageProps {
+    params: Promise<{slug: string}>
+
+
+export default async function TopicShowPage({params}:TopicShowPageProps){
+    const {slug} = await params;
+ 
+    return (
+    <div className="grid grid-cols-4 gap-4 p-4">
+      <div className="col-span-3">
+        <div className="text-2xl font-bold mb-2">
+          {slug}  
+        </div>
+      </div>
+
+      <div>
+      </div>
+    </div>
+    )
+}
+```
