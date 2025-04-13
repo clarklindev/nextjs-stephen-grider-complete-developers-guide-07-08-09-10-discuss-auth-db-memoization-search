@@ -1939,3 +1939,82 @@ export {PostForm};
 
 
 ```
+
+## 102. passing additional args to a server action
+- post server action
+- to create a post in db we need title, content, userId, topicId
+
+<img
+src='exercise_files/102-passing-additional-args-to-server-action.png'
+alt='102-passing-additional-args-to-server-action.png'
+width=600
+/>
+
+- topic id (we have slug) and from slug we can get the id
+- write query to reach db, look at topics -> from slug the id of the topic
+
+<img
+src='exercise_files/102-passingSlug.png'
+alt='102-passingSlug.png'
+width=600
+/>
+
+- app/topics/[slug]/page.tsx
+
+```ts
+//app/topics/[slug]/page.tsx
+import PostCreateForm from "@/components/posts/post-create-form";
+
+export interface TopicShowPageProps {
+    params: Promise<{slug: string}>
+}
+
+export default async function TopicShowPage({params}:TopicShowPageProps){
+    const {slug} = await params;
+
+    return (
+        <div className="grid grid-cols-4 gap-4 p-4">
+          <div className="col-span-3">
+            <div className="text-2xl font-bold mb-2">
+              {slug}  
+            </div>
+          </div>
+    
+          <div>
+            <PostCreateForm slug={slug}/>
+          </div>
+        </div>
+    );
+}
+
+
+```
+
+- then components/posts/post-form.tsx
+```ts
+//components/posts/post-form.tsx
+//...
+
+const [formState, action, isPending ] = useActionState(actions.createPost.bind(null,slug), {errors:{}})
+```
+- we call bind and pass through slug, then in actions.createPost will now receive 3 params:
+  1. the first param becomes the slug
+  2. formState
+  3. formData
+
+
+- and in actions-create-post.ts
+```ts
+export async function createPost(
+    slug:string,
+    formState:CreatePostFormState,
+    formData: FormData
+): Promise<CreatePostFormState>{
+
+  //...
+  const topic = await db.topic.findFirst({
+    where: {slug}
+  })
+
+}
+```

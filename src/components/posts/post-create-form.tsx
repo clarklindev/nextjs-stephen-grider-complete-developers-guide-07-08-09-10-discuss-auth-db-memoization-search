@@ -6,7 +6,11 @@ import {
 } from '@nextui-org/react';
 import { PostForm } from './post-form';
 
-export default function PostCreateForm(){
+export interface PostCreateFormProps{
+    slug:string;
+}
+
+export default function PostCreateForm({slug}:PostCreateFormProps){
 
     return (
         <Popover placement="left">
@@ -16,7 +20,7 @@ export default function PostCreateForm(){
                 </Button>
             </PopoverTrigger>
             <PopoverContent>
-                <PostForm/>
+                <PostForm slug={slug}/>
             </PopoverContent>
         </Popover>
     )

@@ -9,9 +9,10 @@ import {
 import { useActionState, startTransition } from "react";
 
 import * as actions from '@/actions';
+import type { PostCreateFormProps } from '@/components/posts/post-create-form';
 
-const PostForm = ()=>{
-    const [formState, action, isPending ] = useActionState(actions.createPost, {errors:{}})
+const PostForm = ({slug}:PostCreateFormProps)=>{
+    const [formState, action, isPending ] = useActionState(actions.createPost.bind(null,slug), {errors:{}})
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
