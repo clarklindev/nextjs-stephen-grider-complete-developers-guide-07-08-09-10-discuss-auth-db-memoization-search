@@ -2083,3 +2083,23 @@ let post:Post;
     redirect(paths.postShow(slug, post.id));
 }
 ```
+
+## 105. A Few Project Files
+- see exercise_files/files.zip
+- files provided for react components
+
+## 106. merging a few files
+
+<img
+src='exercise_files/106-merging-a-few-files-1.png'
+alt='106-merging-a-few-files-1.png'
+width=600
+/>
+
+<img
+src='exercise_files/106-merging-a-few-files-2.png'
+alt='106-merging-a-few-files-2.png'
+width=600
+/>
+
+- extract files.zip into working folder
