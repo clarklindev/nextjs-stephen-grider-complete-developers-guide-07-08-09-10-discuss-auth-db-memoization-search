@@ -2797,3 +2797,25 @@ export default async function Home() {
 }
 
 ```
+
+## 124. search input
+- search input -> user types something and gets taken to page with the search key within the title or the body of the post
+- create a search input component
+- src/components/search-input.tsx
+
+```ts
+//src/components/search-input.tsx
+import {Input } from '@nextui-org/react';
+
+export default function SearchInput(){
+    return <Input/>
+}
+```
+
+```ts
+//src/components/header.tsx
+import SearchInput from '@/components/search-input';
+
+//...
+ <SearchInput/>
+```
