@@ -2925,3 +2925,29 @@ export default function SearchInput(){
     )
 }
 ```
+
+## 128. Even More Async Dynamic Params in Next.js 15
+- https://nextjs.org/docs/messages/sync-dynamic-apis
+
+change:
+```ts
+  const { term } = searchParams;
+
+```
+
+to:
+
+```ts
+  const { term } = await searchParams;
+
+```
+
+also do this (update interface and wrap searchParams in a Promise)
+
+```ts
+interface SearchPageProps {
+  searchParams: Promise<{
+    term: string;
+  }>;
+}
+```
