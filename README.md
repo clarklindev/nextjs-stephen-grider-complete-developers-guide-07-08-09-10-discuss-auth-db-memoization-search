@@ -2689,3 +2689,46 @@ import {Suspense} from 'react';
 </Suspense>
 
 ```
+
+## 122. adding loading Skeleton
+- loading skeleton with Suspense
+
+<img
+src='exercise_files/122-loading-skeleton.png'
+alt='122-loading-skeleton.png'
+width=600
+/>
+
+- the size of skeleton boxes are arbitary
+- create a new component: `components/posts/post-show-loading.tsx`
+
+```ts
+//components/posts/post-show-loading.tsx
+import {Skeleton} from '@nextui-org/react';
+
+export default function PostShowLoading(){
+    return (
+        <div className="m-4">
+            <div className="my-2">
+                <Skeleton className="h-8 w-48"/>
+            </div>
+            <div className="p-4 border rounded space-y-2">
+                <Skeleton className="h6 w-32"/>
+                <Skeleton className="h6 w-32"/>
+                <Skeleton className="h6 w-32"/>
+            </div>
+        </div>
+    )
+}
+```
+
+```ts
+//topics/[slug]/posts/[postId]/page.tsx
+import { Suspense } from "react";
+import PostShowLoading from "@/components/posts/post-show-loading";
+
+//...
+<Suspense fallback={<PostShowLoading/>}>
+  <PostShow postId={postId}/>
+</Suspense>
+```
