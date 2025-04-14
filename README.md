@@ -3041,3 +3041,15 @@ export default async function SearchPage({searchParams}:SearchPageProps){
 - Did NOT wrap the client component that uses useSearchParams() with `<Suspense>`, even though it's a known requirement in React when using that hook. 
 - A warning is expected due to this omission, and the plan is to address and investigate that next.
 
+## 131. the de-opt to client side rendering warning
+- src/components/header.tsx
+
+```ts
+import { Suspense } from 'react';
+
+//...
+
+ <Suspense>
+    <SearchInput/>
+</Suspense>
+```
