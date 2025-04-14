@@ -2463,3 +2463,178 @@ width=600
 ### Upcoming Solution Strategies:
 - Basic Prop Drilling – pass the full list of comments as props through each component.
 - Alternate Approach using Next.js – to demonstrate an interesting (though slightly less elegant) feature of Next.js.
+
+## 115. Fetching the Big List
+
+<img
+src='exercise_files/115-fetching-the-big-list.png'
+alt='115-fetching-the-big-list.png'
+width=600
+/>
+
+- To implement comment functionality related to a specific post, the plan is to:
+
+- Create a query module:
+- Define a type for comments.
+- Write a CommentQueryFile, define a new type 
+  - write a function fetchCommentsByPostId.
+- Fetch comments at the top level (e.g., PostShowPage):
+- Import and use fetchCommentsByPostId.
+- Pass the fetched data down to CommentList via a fetchData prop.
+
+In CommentList:
+
+- Call the fetchData function to get all related comments.
+- Use props to share the comment data with nested components (like CommentShow).
+- Key Approach: Share the fetched comment list using props throughout the component tree.
+
+- THIS IS THE FUNCTION WE PASS AROUND
+```ts
+//db/queries/comments.ts
+import type {Comment} from '@prisma/client';
+import {db} from '@/db';
+
+export type CommentWithAuthor = Comment & {
+    user: {name:string | null; image: string| null};
+};
+
+
+export function fetchCommentsByPostId(postId:string):Promise<CommentWithAuthor[]>{
+    return db.comment.findMany({
+        where: {postId},
+        include:{
+            user:{
+                select:{
+                    name:true,
+                    image:true,
+                }
+            }
+        }
+    })
+}
+```
+
+- THIS IS THE RECEIVER -> receives function fetchData()
+```ts
+// components/comments/comment-list.tsx
+import CommentShow from "@/components/comments/comment-show";
+import type { CommentWithAuthor } from "@/db/queries/comments";
+
+interface CommentListProps {
+  fetchData: ()=> Promise<CommentWithAuthor[]>
+}
+
+export default async function CommentList({ fetchData }: CommentListProps) {
+  const comments = await fetchData();
+
+  const topLevelComments = comments.filter(
+    (comment) => comment.parentId === null
+  );
+  const renderedComments = topLevelComments.map((comment) => {
+    return (
+      <CommentShow
+        key={comment.id}
+        commentId={comment.id}
+        comments={comments}
+      />
+    );
+  });
+
+  return (
+    <div className="space-y-3">
+      <h1 className="text-lg font-bold">All {comments.length} comments</h1>
+      {renderedComments}
+    </div>
+  );
+}
+
+```
+
+
+```ts
+//components/comments/comment-show.tsx
+import Image from "next/image";
+import { Button } from "@nextui-org/react";
+import CommentCreateForm from "@/components/comments/comment-create-form";
+import type { CommentWithAuthor } from "@/db/queries/comments";
+
+interface CommentShowProps {
+  commentId: string;
+  comments: CommentWithAuthor[]
+}
+
+export default function CommentShow({ commentId, comments }: CommentShowProps) {
+  const comment = comments.find((c) => c.id === commentId);
+
+  if (!comment) {
+    return null;
+  }
+
+  const children = comments.filter((c) => c.parentId === commentId);
+  const renderedChildren = children.map((child) => {
+    return (
+      <CommentShow key={child.id} commentId={child.id} comments={comments} />
+    );
+  });
+
+  return (
+    <div className="p-4 border mt-2 mb-1">
+      <div className="flex gap-3">
+        <Image
+          src={comment.user.image || ""}
+          alt="user image"
+          width={40}
+          height={40}
+          className="w-10 h-10 rounded-full"
+        />
+        <div className="flex-1 space-y-3">
+          <p className="text-sm font-medium text-gray-500">
+            {comment.user.name}
+          </p>
+          <p className="text-gray-900">{comment.content}</p>
+
+          <CommentCreateForm postId={comment.postId} parentId={comment.id} />
+        </div>
+      </div>
+      <div className="pl-4">{renderedChildren}</div>
+    </div>
+  );
+}
+
+```
+
+- pass down fetchData to CommentList
+
+```ts
+//app/topics/[slug]/posts/[postId]/page.tsx
+import Link from "next/link";
+import PostShow from "@/components/posts/post-show";
+import CommentList from "@/components/comments/comment-list";
+import CommentCreateForm from "@/components/comments/comment-create-form";
+import paths from "@/paths";
+import { fetchCommentsByPostId } from "@/db/queries/comments";
+
+
+interface PostShowPageProps {
+  params: Promise<{
+    slug: string;
+    postId: string;
+  }>;
+}
+
+export default async function PostShowPage({ params }: PostShowPageProps) {
+  const { slug, postId } = await params;
+
+  return (
+    <div className="space-y-3">
+      <Link className="underline decoration-solid" href={paths.topicShow(slug)}>
+        {"< "}Back to {slug}
+      </Link>
+      <PostShow postId={postId}/>
+      <CommentCreateForm postId={postId} startOpen />
+      <CommentList fetchData={()=> fetchCommentsByPostId(postId)}/>
+    </div>
+  );
+}
+
+```
