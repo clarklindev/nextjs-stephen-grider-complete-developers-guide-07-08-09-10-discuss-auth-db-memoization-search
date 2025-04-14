@@ -2638,3 +2638,25 @@ export default async function PostShowPage({ params }: PostShowPageProps) {
 }
 
 ```
+
+## 118. Request Memoization
+
+<img
+src='exercise_files/118-request-memoization.png'
+alt='118-request-memoization.png'
+width=600
+/>
+
+- duplicate requests dont make requests to db
+- there is a cache function we can use to deduplicate requests
+
+## 119. Deduplicating Requests with Cache
+- using the cache() function
+
+```ts
+// db/queries/comments.ts
+import {cache} from 'react';
+
+export const fetchCommentsByPostId = cache((postId:string):Promise<CommentWithAuthor[]> =>{});
+
+```
