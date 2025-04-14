@@ -2660,3 +2660,32 @@ import {cache} from 'react';
 export const fetchCommentsByPostId = cache((postId:string):Promise<CommentWithAuthor[]> =>{});
 
 ```
+
+---
+# section 10 - implementing search functionality
+
+## 120. adding a component streaming
+
+<img
+src='exercise_files/120-wrapping-suspense-around-server-components.png'
+alt='120-wrapping-suspense-around-server-components.png'
+width=600
+/>
+
+- using Suspense
+- initial page load fast
+- as you load data, show Suspense (empty space for PostShow and CommentList)
+- makes use loading spinners with using Suspense
+
+## 121. streaming with Suspense
+- to make use of this, just use Suspense
+
+```ts
+import {Suspense} from 'react';
+
+//...
+<Suspense fallback={<div>Loading...</div>}>
+  <PostShow postId={postID}/>
+</Suspense>
+
+```
