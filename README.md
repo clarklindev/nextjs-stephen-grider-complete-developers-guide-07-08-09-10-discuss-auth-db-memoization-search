@@ -2819,3 +2819,43 @@ import SearchInput from '@/components/search-input';
 //...
  <SearchInput/>
 ```
+
+## 125. notes on querystrings in next
+- we look at wikipedia search
+- it relies on query string in url
+- TODO: store users search term in query string
+
+<img
+src='exercise_files/125-querystrings.png'
+alt='125-querystrings.png'
+width=600
+/>
+
+- @2min33sec
+- Page components receive the query string data through the 'searchParams' prop
+- access via searchParams via prop
+
+<img
+src='exercise_files/125-querystring-searchParams.png'
+alt='125-querystring-searchParams.png'
+width=600
+/>
+
+
+- Client components can get query string data with 'useSearchParams'
+- client components with 'useSearchParams' need to be wrapped with 'Suspense' or you'll get a strange warning at build time.
+
+```ts
+'use client';
+import {useSearchParams} from 'next/navigation';
+
+function SearchInput(){
+  const searchParams = useSearchParams();
+
+  return <div>
+  {searchParams.term}
+  </div>
+}
+```
+
+- Pages that reference 'searchParams' will be marked as 'dynamic' for purposes of build time caching.
