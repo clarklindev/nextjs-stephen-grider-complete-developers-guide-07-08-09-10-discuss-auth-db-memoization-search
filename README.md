@@ -2859,3 +2859,21 @@ function SearchInput(){
 ```
 
 - Pages that reference 'searchParams' will be marked as 'dynamic' for purposes of build time caching.
+
+## 126. accessing the query string
+- client components can get query string data with 'useSearchParams'
+- test via url http://localhost:3000/?term=javascript
+
+```ts
+//components/search-input.tsx
+'use client';
+
+import {Input } from '@nextui-org/react';
+import {useSearchParams} from 'next/navigation';
+
+export default function SearchInput(){
+    const searchParams = useSearchParams();
+
+    return <Input defaultValue={searchParams.get('term') || ""}/>
+}
+```
