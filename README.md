@@ -2732,3 +2732,68 @@ import PostShowLoading from "@/components/posts/post-show-loading";
   <PostShow postId={postId}/>
 </Suspense>
 ```
+
+## 123. Top Posts on the homepage
+
+- db/queries/posts.ts
+- fetchTopPosts()
+
+```ts
+
+export function fetchTopPosts():Promise<PostWithData[]>{
+    return db.post.findMany({
+        orderBy: [
+            {
+                comments:{
+                    _count: "desc"
+                }
+            }
+        ],
+        include: {
+            topic: {select: {slug: true}},
+            user: {select: {name:true, image:true}},
+            _count: {select: {comments:true}}
+        },
+        take: 5
+    })
+
+}
+```
+
+- then show it on Homepage
+- app/page.tsx
+
+```ts
+//app/page.tsx
+import TopicCreateForm from '@/components/topics/topic-create-form';
+import {auth} from '@/auth';
+import TopicList from '@/components/topics/topic-list';
+import { Divider } from '@nextui-org/react';
+import PostList from '@/components/posts/post-list';
+import { fetchTopPosts } from '@/db/queries/posts';
+
+export default async function Home() {
+  const session = await auth();
+
+  return (
+    <div className="grid grid-cols-4 gap-4 p-4">
+      <div className="col-span-3">
+        <h1 className="text-xl m-2">Top Posts</h1>
+        <PostList fetchData={fetchTopPosts}/>
+      </div>
+      
+      {
+        session?.user ? 
+          <div className="border shadow py-3 px-2">
+            <TopicCreateForm/>
+            <Divider className="my-2"/>
+            <TopicList/>
+          </div>
+        : <></>
+      }
+    
+    </div>
+  );
+}
+
+```
