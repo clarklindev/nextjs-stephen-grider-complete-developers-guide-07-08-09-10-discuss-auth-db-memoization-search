@@ -2951,3 +2951,29 @@ interface SearchPageProps {
   }>;
 }
 ```
+
+## 129. Receiving the Query String in a Server Component
+
+- app/search/page.tsx
+- TODO: access the term from query string in server component
+
+```ts
+//app/search/page.tsx
+import { redirect } from "next/navigation";
+
+interface SearchPageProps {
+    searchParams: Promise<{
+        term:string;
+    }>;
+}
+
+export default async function SearchPage({searchParams}:SearchPageProps){
+    const {term} = await searchParams;
+    if(!term){
+        redirect('/');
+    }
+
+    return <div>{term}</div>
+}
+
+```
