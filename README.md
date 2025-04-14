@@ -2877,3 +2877,51 @@ export default function SearchInput(){
     return <Input defaultValue={searchParams.get('term') || ""}/>
 }
 ```
+
+## 127. Redirecting from a server action
+
+<img
+src='exercise_files/127-search-via-url.png'
+alt='127-search-via-url.png'
+width=600
+/>
+
+- when user searches from search input, it should redirect user:
+   - to something like -> localhost:3000/search?term=javascript
+
+- `actions/search.ts`
+
+```ts
+'use server';
+
+import {redirect} from 'next/navigation';
+
+export async function search(formData:FormData){
+    const term = formData.get('term');
+    if(typeof term !== 'string' || !term){
+        redirect('/');
+    }
+    redirect(`/search?term=${term}`);
+}
+```
+
+- update index.ts to includes search.ts
+- components/search-input.tsx
+
+```ts
+'use client';
+
+import {Input } from '@nextui-org/react';
+import {useSearchParams} from 'next/navigation';
+import * as actions from '@/actions';
+
+export default function SearchInput(){
+    const searchParams = useSearchParams();
+
+    return (
+        <form action={actions.search}>
+            <Input name="term" defaultValue={searchParams.get('term') || ""}/>
+        </form>
+    )
+}
+```
