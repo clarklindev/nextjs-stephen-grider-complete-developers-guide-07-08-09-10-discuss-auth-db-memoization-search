@@ -3043,7 +3043,7 @@ export default async function SearchPage({searchParams}:SearchPageProps){
 
 ## 131. the de-opt to client side rendering warning
 - src/components/header.tsx
-
+`
 ```ts
 import { Suspense } from 'react';
 
