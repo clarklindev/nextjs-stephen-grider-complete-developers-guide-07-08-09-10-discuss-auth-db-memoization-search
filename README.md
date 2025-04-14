@@ -2977,3 +2977,67 @@ export default async function SearchPage({searchParams}:SearchPageProps){
 }
 
 ```
+
+## 130. Running the Search
+- Goal -> Implement a search feature that allows users to find posts by matching a term within their title or content fields, using a database query and rendering the results on a search results page.
+
+1. Creating the Query
+- Opened the `db/queries/posts` file, which is where all the database logic related to posts lives.
+- Following the existing pattern used for other queries, the new function is defined here as well.
+
+```ts
+// db/queries/posts.ts
+export function fetchPostsBySearchTerm(term:string):Promise<PostWithData[]>{
+    return db.post.findMany({
+        include:{
+            topic:{select: {slug: true}},
+            user: {select: {name:true, image:true}},
+            _count: {select: {comments: true}}
+        },
+        where:{
+            OR:[
+                {title: {contains:term}},
+                {content: {contains:term}}
+            ]
+        }
+    })
+}
+```
+2. Function Definition
+- Exported a new function named `fetchPostsBySearchTerm`.
+- Originally considered searchPosts, but decided to keep naming consistent with other functions (fetchPosts...) for clarity and convention.
+- Function accepts a term argument of type string.
+- Returns an array of PostWithData (which likely includes all associated metadata).
+
+3. Consuming the Query in the Component
+- Back in the Page Component (`app/search/page.tsx`):
+```ts
+//app/search/page.tsx
+
+import { redirect } from "next/navigation";
+import PostList from "@/components/posts/post-list"; 
+import { fetchPostsBySearchTerm } from "@/db/queries/posts";
+
+interface SearchPageProps {
+    searchParams: Promise<{
+        term:string;
+    }>;
+}
+
+export default async function SearchPage({searchParams}:SearchPageProps){
+    const {term} = await searchParams;
+    if(!term){
+        redirect('/');
+    }
+
+    return <div>
+        <PostList fetchData={()=> fetchPostsBySearchTerm(term)}/>
+    </div>
+}
+
+```
+
+4. An Important Missing Piece
+- Did NOT wrap the client component that uses useSearchParams() with `<Suspense>`, even though it's a known requirement in React when using that hook. 
+- A warning is expected due to this omission, and the plan is to address and investigate that next.
+
